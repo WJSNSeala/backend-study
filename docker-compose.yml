@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker-state-preserve/mysql-data:/var/lib/mysql
+    networks:
+      - spring-network
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  spring-boot-backend:
+    build: ./SpringMySQLDemo
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    networks:
+      - spring-network
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/mydatabase
+      - SPRING_DATASOURCE_USERNAME=myuser
+      - SPRING_DATASOURCE_PASSWORD=mypassword
+
+networks:
+  spring-network:
+    driver: bridge

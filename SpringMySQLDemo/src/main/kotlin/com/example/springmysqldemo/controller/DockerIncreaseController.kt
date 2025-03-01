@@ -10,7 +10,12 @@ import org.springframework.web.bind.annotation.RestController
 class DockerIncreaseController(private val service: DockerIncreaseService) {
 
     @GetMapping("/increase")
-    fun getIncreaseValue(): Map<String, Int> {
+    fun increaseValue(): Map<String, Int> {
+        return service.increaseValue()
+    }
+
+    @GetMapping("/view")
+    fun getValue(): Map<String, Int> {
         return service.getValue()
     }
 }
