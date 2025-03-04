@@ -1,8 +1,11 @@
 package com.example.boardapipractice.service
 
+import com.example.boardapipractice.dto.post.PostCreateDto
 import com.example.boardapipractice.dto.post.PostUpdateDto
 import com.example.boardapipractice.entity.Post
 import com.example.boardapipractice.repository.PostRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Optional
@@ -15,8 +18,8 @@ class PostService(private val postRepository: PostRepository) {
      *
      * @return 모든 게시물 목록
      */
-    fun getAllPosts(): List<Post> {
-        return postRepository.findAll()
+    fun getAllPosts(pageable: Pageable): Page<Post> {
+        return postRepository.findAll(pageable)
     }
 
     /**
@@ -36,7 +39,8 @@ class PostService(private val postRepository: PostRepository) {
      * @return 저장된 게시물 객체 (ID가 할당됨)
      */
     @Transactional
-    fun createPost(post: Post): Post {
+    fun createPost(postCreateDto: PostCreateDto): Post {
+        val post = postCreateDto.toEntity()
         return postRepository.save(post)
     }
 
@@ -77,4 +81,14 @@ class PostService(private val postRepository: PostRepository) {
         }
     }
 
+    /**
+     * 게시물 존재 여부 확인
+     *
+     * @param postId 게시물 ID
+     * @return 게시물 존재 여부
+     */
+
+    fun existsById(postId: Long): Boolean {
+        return postRepository.existsById(postId)
+    }
 }

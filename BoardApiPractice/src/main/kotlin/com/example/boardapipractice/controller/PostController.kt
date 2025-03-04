@@ -1,8 +1,10 @@
 package com.example.boardapipractice.controller
 
+import com.example.boardapipractice.dto.post.PostCreateDto
 import com.example.boardapipractice.dto.post.PostUpdateDto
 import com.example.boardapipractice.entity.Post
 import com.example.boardapipractice.service.PostService
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -20,9 +22,18 @@ class PostController(
      * @return 모든 게시물 목록
      */
     @GetMapping
-    fun getAllPosts(): ResponseEntity<List<Post>> {
-        val posts =  postService.getAllPosts()
-        return ResponseEntity.ok(posts)
+    fun getAllPosts(
+        @RequestParam(required = true) limit: Int,
+        @RequestParam(required = false, defaultValue = "1") page: Int
+    ): ResponseEntity<List<Post>> {
+        if (limit < 1 || page < 1) {
+            return ResponseEntity.badRequest().build()
+        }
+
+        val pageable = PageRequest.of(page-1, limit)
+        val posts =  postService.getAllPosts(pageable)
+
+        return ResponseEntity.ok(posts.content)
     }
 
     /**
@@ -49,8 +60,8 @@ class PostController(
      * @return 저장된 게시물 객체 (ID가 할당됨)
      */
     @PostMapping
-    fun createPost(@RequestBody post: Post): ResponseEntity<Post> {
-        val createdPost = postService.createPost(post)
+    fun createPost(@RequestBody postCreateDto: PostCreateDto ): ResponseEntity<Post> {
+        val createdPost = postService.createPost(postCreateDto)
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPost)
     }
 

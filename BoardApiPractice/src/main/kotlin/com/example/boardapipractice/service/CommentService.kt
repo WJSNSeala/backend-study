@@ -1,22 +1,29 @@
 package com.example.boardapipractice.service
 
+import com.example.boardapipractice.dto.comment.CommentCreateDto
 import com.example.boardapipractice.dto.comment.CommentUpdateDto
 import com.example.boardapipractice.entity.Comment
 import com.example.boardapipractice.repository.CommentRepository
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Optional
 
 @Service
-class CommentService(private val commentRepository: CommentRepository) {
+class CommentService(
+    private val commentRepository: CommentRepository,
+    private val postService: PostService
+
+) {
 
     /**
      * 모든 댓글 조회
      *
      * @return 모든 댓글 목록
      */
-    fun getAllComments(): List<Comment> {
-        return commentRepository.findAll()
+    fun getAllComments(pageable: Pageable): Page<Comment> {
+        return commentRepository.findAll(pageable)
     }
 
     /**
@@ -45,8 +52,13 @@ class CommentService(private val commentRepository: CommentRepository) {
      * @return 저장된 댓글 객체 (ID가 할당됨)
      */
     @Transactional
-    fun createComment(comment: Comment): Comment {
-        return commentRepository.save(comment)
+    fun createComment(commentCreateDto: CommentCreateDto): Comment {
+      if (postService.existsById(commentCreateDto.parentPostId)) {
+            val comment = commentCreateDto.toEntity()
+            return commentRepository.save(comment)
+      } else {
+            throw NoSuchElementException("ID가 " + commentCreateDto.parentPostId + "인 게시물을 찾을 수 없습니다")
+      }
     }
 
     /**

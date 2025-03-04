@@ -1,8 +1,10 @@
 package com.example.boardapipractice.controller
 
+import com.example.boardapipractice.dto.comment.CommentCreateDto
 import com.example.boardapipractice.dto.comment.CommentUpdateDto
 import com.example.boardapipractice.entity.Comment
 import com.example.boardapipractice.service.CommentService
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -20,9 +22,19 @@ class CommentController(
         * @return 모든 댓글 목록
         */
         @GetMapping
-        fun getAllComments(): ResponseEntity<List<Comment>> {
-            val comments = commentService.getAllComments()
-            return ResponseEntity.ok(comments)
+        fun getAllComments(
+            @RequestParam(required = true) limit: Int,
+            @RequestParam(required = false,
+                          defaultValue = "1") page: Int,
+        ): ResponseEntity<List<Comment>> {
+            if (limit < 1 || page < 1) {
+                return ResponseEntity.badRequest().build()
+            }
+
+            val pageable = PageRequest.of(page-1, limit)
+
+            val comments = commentService.getAllComments(pageable)
+            return ResponseEntity.ok(comments.content)
         }
 
         /**
@@ -60,8 +72,8 @@ class CommentController(
         * @return 저장된 댓글 객체 (ID가 할당됨)
         */
         @PostMapping
-        fun createComment(@RequestBody comment: Comment): ResponseEntity<Comment> {
-            val createdComment = commentService.createComment(comment)
+        fun createComment(@RequestBody commentCreateDto: CommentCreateDto): ResponseEntity<Comment> {
+            val createdComment = commentService.createComment(commentCreateDto)
             return ResponseEntity.status(HttpStatus.CREATED).body(createdComment)
         }
 
