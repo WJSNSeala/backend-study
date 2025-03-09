@@ -4,8 +4,11 @@ import com.example.boardapipractice.dto.comment.CommentCreateDto
 import com.example.boardapipractice.dto.comment.CommentUpdateDto
 import com.example.boardapipractice.entity.Comment
 import com.example.boardapipractice.repository.CommentRepository
+import org.springframework.dao.OptimisticLockingFailureException
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.retry.annotation.Backoff
+import org.springframework.retry.annotation.Retryable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.util.Optional
@@ -66,6 +69,26 @@ class CommentService(
      */
     @Transactional
     fun increaseLikeCount(commentId: Long): Comment {
+        val existingComment = commentRepository.findById(commentId).orElseThrow {
+            NoSuchElementException("ID가 " + commentId + "인 댓글을 찾을 수 없습니다")
+        }
+
+        existingComment.likes += 1
+
+        return commentRepository.save(existingComment)
+    }
+
+    /**
+     * 좋아요 수 증가 optimistkc locking 적용
+     *
+     */
+    @Retryable(
+        include = [OptimisticLockingFailureException::class],
+        maxAttempts = 10,
+        backoff = Backoff(delay = 100, multiplier = 1.5)
+    )
+    @Transactional
+    fun increaseLikeCountWithOptimisticLocking(commentId: Long): Comment {
         val existingComment = commentRepository.findById(commentId).orElseThrow {
             NoSuchElementException("ID가 " + commentId + "인 댓글을 찾을 수 없습니다")
         }

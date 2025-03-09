@@ -83,7 +83,9 @@ class CommentController(
 
         @PostMapping("/{commentId}/like")
         fun incrementLikes(@PathVariable commentId: Long): ResponseEntity<Comment> {
-            val updatedComment = commentService.increaseLikeCount(commentId)
+//            val updatedComment = commentService.increaseLikeCount(commentId)
+            // instead, use optimistic locking method
+            val updatedComment = commentService.increaseLikeCountWithOptimisticLocking(commentId)
             return ResponseEntity.ok(updatedComment)
         }
 
