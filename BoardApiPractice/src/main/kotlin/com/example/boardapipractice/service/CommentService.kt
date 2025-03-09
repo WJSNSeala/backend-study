@@ -62,6 +62,20 @@ class CommentService(
     }
 
     /**
+     *  좋아요 수 증가
+     */
+    @Transactional
+    fun increaseLikeCount(commentId: Long): Comment {
+        val existingComment = commentRepository.findById(commentId).orElseThrow {
+            NoSuchElementException("ID가 " + commentId + "인 댓글을 찾을 수 없습니다")
+        }
+
+        existingComment.likes += 1
+
+        return commentRepository.save(existingComment)
+    }
+
+    /**
      * 댓글 수정
      *
      * @param commentId 수정할 댓글의 ID

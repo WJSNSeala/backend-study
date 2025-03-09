@@ -45,6 +45,19 @@ class PostService(private val postRepository: PostRepository) {
     }
 
     /**
+     * 게시물 좋아요 수 증가
+     */
+    @Transactional
+    fun incrementLikes(postId: Long): Post {
+        val post = postRepository.findById(postId).orElseThrow {
+            NoSuchElementException("ID가 " + postId + "인 게시물을 찾을 수 없습니다")
+        }
+
+        post.likes += 1
+        return postRepository.save(post)
+    }
+
+    /**
      * 게시물 수정
      *
      * @param postId 수정할 게시물의 ID

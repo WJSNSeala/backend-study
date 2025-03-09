@@ -78,6 +78,16 @@ class CommentController(
         }
 
         /**
+         * 댓글 좋아요 수 증가
+         */
+
+        @PostMapping("/{commentId}/like")
+        fun incrementLikes(@PathVariable commentId: Long): ResponseEntity<Comment> {
+            val updatedComment = commentService.increaseLikeCount(commentId)
+            return ResponseEntity.ok(updatedComment)
+        }
+
+        /**
         * 댓글 수정
         *
         * @param commentId 수정할 댓글의 ID

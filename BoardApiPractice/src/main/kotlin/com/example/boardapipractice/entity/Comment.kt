@@ -24,4 +24,7 @@ data class Comment(
 
     @Version
     var version: Long = 0,
+
+    @Column(name="likes", columnDefinition = "int default 0")
+    var likes: Int = 0
 )

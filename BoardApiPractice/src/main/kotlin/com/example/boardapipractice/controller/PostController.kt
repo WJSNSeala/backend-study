@@ -66,6 +66,15 @@ class PostController(
     }
 
     /**
+     * 게시물 좋아요 수 증가
+     */
+    @PostMapping("/{postId}/like")
+    fun incrementLikes(@PathVariable postId: Long): ResponseEntity<Post> {
+        val updatedPost =  postService.incrementLikes(postId)
+        return ResponseEntity.ok(updatedPost)
+    }
+
+    /**
      * 게시물 수정
      *
      * @param postId 수정할 게시물의 ID
