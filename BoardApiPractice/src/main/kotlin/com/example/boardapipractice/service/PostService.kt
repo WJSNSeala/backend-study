@@ -4,11 +4,11 @@ import com.example.boardapipractice.dto.post.PostCreateDto
 import com.example.boardapipractice.dto.post.PostUpdateDto
 import com.example.boardapipractice.entity.Post
 import com.example.boardapipractice.repository.PostRepository
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.Optional
 
 @Service
 class PostService(private val postRepository: PostRepository) {
@@ -56,6 +56,7 @@ class PostService(private val postRepository: PostRepository) {
      */
     @Transactional
     fun updatePost(postId: Long, postUpdateDto: PostUpdateDto): Post {
+
         val existingPost = postRepository.findById(postId).orElseThrow {
             NoSuchElementException("ID가 " + postId + "인 게시물을 찾을 수 없습니다")
         }
@@ -90,5 +91,9 @@ class PostService(private val postRepository: PostRepository) {
 
     fun existsById(postId: Long): Boolean {
         return postRepository.existsById(postId)
+    }
+
+    companion object {
+        val logger = LoggerFactory.getLogger(this::class.java)
     }
 }

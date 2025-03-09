@@ -21,4 +21,7 @@ data class Comment(
     // 직접 ID 값 접근용
     @Column(name = "parent_post_id")
     var parentPostId: Long,
+
+    @Version
+    var version: Long = 0,
 )

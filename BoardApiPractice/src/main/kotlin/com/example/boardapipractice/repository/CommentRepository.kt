@@ -1,7 +1,9 @@
 package com.example.boardapipractice.repository
 
 import com.example.boardapipractice.entity.Comment
+import jakarta.persistence.LockModeType
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Lock
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
@@ -19,6 +21,7 @@ interface CommentRepository: JpaRepository<Comment, Long> {
      * @return 게시물 ID에 해당하는 댓글 목록
      */
 
+//    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT c FROM Comment c WHERE c.parentPostId = :postId")
     fun findByPostId(@Param("postId") postId: Long): List<Comment>
 }
