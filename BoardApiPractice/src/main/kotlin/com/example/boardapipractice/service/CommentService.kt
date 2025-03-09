@@ -25,6 +25,7 @@ class CommentService(
      *
      * @return 모든 댓글 목록
      */
+    @Transactional(readOnly = true)
     fun getAllComments(pageable: Pageable): Page<Comment> {
         return commentRepository.findAll(pageable)
     }
@@ -33,6 +34,7 @@ class CommentService(
      * ID로 댓글 조회
      * @throws NoSuchElementException 댓글을 찾을 수 없는 경우
      */
+    @Transactional(readOnly = true)
     fun getCommentById(commentId: Long): Comment {
         return commentRepository.findById(commentId).orElseThrow {
             NoSuchElementException("ID가 " + commentId + "인 댓글을 찾을 수 없습니다")
@@ -43,6 +45,7 @@ class CommentService(
      * 게시물 ID로 댓글 조회
      * @throws NoSuchElementException 댓글을 찾을 수 없는 경우
      */
+    @Transactional(readOnly = true)
     fun getCommentsByPostId(postId: Long): List<Comment> {
         return commentRepository.findByPostId(postId)
     }

@@ -18,6 +18,7 @@ class PostService(private val postRepository: PostRepository) {
      *
      * @return 모든 게시물 목록
      */
+    @Transactional(readOnly = true)
     fun getAllPosts(pageable: Pageable): Page<Post> {
         return postRepository.findAll(pageable)
     }
@@ -26,6 +27,7 @@ class PostService(private val postRepository: PostRepository) {
      * ID로 게시물 조회
      * @throws NoSuchElementException 게시물을 찾을 수 없는 경우
      */
+    @Transactional(readOnly = true)
     fun getPostById(postId: Long): Post {
         return postRepository.findById(postId).orElseThrow {
             NoSuchElementException("ID가 " + postId + "인 게시물을 찾을 수 없습니다")
@@ -115,6 +117,7 @@ class PostService(private val postRepository: PostRepository) {
      * @return 게시물 존재 여부
      */
 
+    @Transactional(readOnly = true)
     fun existsById(postId: Long): Boolean {
         return postRepository.existsById(postId)
     }
