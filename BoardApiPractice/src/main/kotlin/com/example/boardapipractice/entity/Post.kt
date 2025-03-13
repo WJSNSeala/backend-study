@@ -21,5 +21,7 @@ data class Post(
     @Column(name = "password", length=100)
     var password: String,
 
+    @Column(name="likes", columnDefinition = "int default 0")
+    var likes: Int = 0
 )
 
