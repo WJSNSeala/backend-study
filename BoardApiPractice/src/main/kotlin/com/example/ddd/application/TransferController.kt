@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RestController
 class TransferController(
     private val transferService: TransferService
 ) {
-    @PostMapping('/wallet/{userName}')
+    @PostMapping("/wallet/{userName}")
     fun createWallet(userName: String): WalletId {
         try {
-            transferService.createWallet(userName)
+            return transferService.createWallet(userName)
         } catch (e: Exception) {
             throw RuntimeException("Could not create wallet")
         }

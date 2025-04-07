@@ -3,12 +3,17 @@ package com.example.ddd.service
 import com.example.ddd.domain.wallet.Wallet
 import com.example.ddd.domain.wallet.WalletId
 import com.example.ddd.domain.wallet.WalletRepository
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.cache.CacheManager
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.transaction.annotation.Transactional
 
 open class TransferService(
-    private val walletRepository: WalletRepository
+    private val walletRepository: WalletRepository,
+    @Qualifier("caffeineCacheManager") private val cacheManager: CacheManager,
 ) {
+    private val walletCache = cacheManager.getCache("wallet")!!
 
     // application : 가져오고 저장하기 신경 씀
     // 이걸 가져다 쓰고 싶은 사람은 id로만 가져다 쓰면 됨
@@ -61,6 +66,13 @@ open class TransferService(
         walletRepository.save(wallet)
     }
 
+    @Cacheable(
+//        keyGenerator = "", // custom key generator
+//        condition = "", // SpEL에 따라 언제 캐시할지를 결정
+
+//        cacheManager = "redisCacheManager", // 이 함수의 캐시를 관리할 캐시매니저의 qualifier를 지정
+//        value = "", // zo
+    ) // in-memory cache
     @Transactional(readOnly = true)
     // application : 가져오고 저장하기 신경 씀
     open fun getNetAsset(walletId: WalletId): Long {

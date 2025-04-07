@@ -1,3 +1,5 @@
 .idea
 
 docker-state-preserve/mysql-data
+
+.DS_Store
