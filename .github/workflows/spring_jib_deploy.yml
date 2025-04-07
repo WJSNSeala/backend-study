@@ -2,7 +2,12 @@ name: Build and Deploy Spring Boot Application with Jib
 
 on:
   push:
-    branches: main
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build-and-deploy:
