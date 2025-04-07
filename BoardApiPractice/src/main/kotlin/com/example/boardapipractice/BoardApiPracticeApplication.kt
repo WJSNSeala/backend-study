@@ -7,6 +7,7 @@ import org.springframework.retry.annotation.EnableRetry
 
 @SpringBootApplication
 @EnableRetry
+
 class BoardApiPracticeApplication
 
 fun main(args: Array<String>) {

@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 
-@RestController
+@RestController // 원래 MVC면 어떤 탬플릿? 어떤 모델까지 결정해야하는데 -> 난 그냥 단일 객체만 반환할거임,
 @RequestMapping("/api/posts")
 class PostController(
     private val postService: PostService
