@@ -49,30 +49,30 @@ tasks.withType<Test> {
 	useJUnitPlatform()
 }
 
-val dockerUsername: String by project
-val dockerPassword: String by project
-
 jib {
 	// 애플리케이션을 빌드할 기본 이미지를 구성
 	from {
 		image = "eclipse-temurin:21.0.3_9-jre-ubi9-minimal"
 	}
 	to {
+		// 기본 이미지 설정, GitHub Actions에서 재정의됨
 		image = "rocketman35/spring_jlb"
-		tags = setOf("0.0.1")
-
-		auth {
-			username = ""
-			password = ""
-		}
+		tags = setOf("latest")
 	}
 	// 빌드된 이미지에서 실행될 컨테이너를 구성
 	container {
 		jvmFlags = listOf(
-			"-Dspring.profiles.active=local",
+			"-Dspring.profiles.active=prod",
 			"-Dfile.encoding=UTF-8",
 		)
 		ports = listOf("8080")
+		environment = mapOf(
+			// 기본값으로 로컬 개발용 환경 변수를 설정
+			// 실제 배포 환경에서는 GitHub Actions에서 재정의됨
+			"DB_URL" to "jdbc:mysql://localhost:3306/mydatabase",
+			"DB_USERNAME" to "myuser",
+			"DB_PASSWORD" to "mypassword"
+		)
 		setAllowInsecureRegistries(true)  // 보안이 적용되지 않은 registry 연결 허용
 	}
 }

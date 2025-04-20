@@ -21,6 +21,7 @@ jobs:
         with:
           java-version: "19"
           distribution: "temurin"
+          cache: gradle
 
       # gradlew에 실행 권한 부여
       - name: Grant execute permission for gradlew
@@ -42,7 +43,8 @@ jobs:
           cd BoardApiPractice
           ./gradlew jib \
             -Djib.from.image=eclipse-temurin:21.0.3_9-jre-ubi9-minimal \
-            -Djib.to.image=${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:${{ github.sha }}
+            -Djib.to.image=${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:${{ github.sha }} \
+            -Djib.container.environment=DB_URL=${{ secrets.DB_URL }},DB_USERNAME=${{ secrets.DB_USERNAME }},DB_PASSWORD=${{ secrets.DB_PASSWORD }}
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
