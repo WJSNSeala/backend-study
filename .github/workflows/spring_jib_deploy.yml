@@ -20,13 +20,24 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: "17"
-          distribution: "temurin"
+          distribution:
+            "temurin"
 
-      # Use Gradle Build Action which provides Gradle directly
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          gradle-version: "8.5" # Specify a Gradle version
+            # 프로젝트 구조 확인
+      - name: Check project structure
+        run: |
+          echo "확인: BoardApiPractice 디렉토리 내용"
+          ls -la BoardApiPractice/
+
+      - name: Make gradlew executable
+        working-directory: ./BoardApiPractice
+        run: chmod +x ./gradlew
+
+      # # Use Gradle Build Action which provides Gradle directly
+      # - name: Setup Gradle
+      #   uses: gradle/actions/setup-gradle@v3
+      #   with:
+      #     gradle-version: "8.5" # Specify a Gradle version
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
