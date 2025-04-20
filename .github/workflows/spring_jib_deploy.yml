@@ -20,24 +20,11 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: "17"
-          distribution:
-            "temurin"
+          distribution: "temurin"
 
-            # 프로젝트 구조 확인
-      - name: Check project structure
-        run: |
-          echo "확인: BoardApiPractice 디렉토리 내용"
-          ls -la BoardApiPractice/
-
-      - name: Make gradlew executable
-        working-directory: ./BoardApiPractice
-        run: chmod +x ./gradlew
-
-      # # Use Gradle Build Action which provides Gradle directly
-      # - name: Setup Gradle
-      #   uses: gradle/actions/setup-gradle@v3
-      #   with:
-      #     gradle-version: "8.5" # Specify a Gradle version
+      # gradlew에 실행 권한 부여
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./BoardApiPractice/gradlew
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -51,10 +38,10 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Build with Jib and push to ECR
+        run: |
+          cd BoardApiPractice
+          ./gradlew jib -Djib.to.image=${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:${{ github.sha }}
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
-        run: |
-          # Use 'gradle' command instead of './gradlew'
-          gradle jib -Djib.to.image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
