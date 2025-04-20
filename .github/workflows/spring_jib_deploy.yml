@@ -22,6 +22,16 @@ jobs:
           java-version: "17"
           distribution: "temurin"
 
+      # Use the Gradle Build Action to set up Gradle
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      # Or alternatively, ensure the wrapper is executable
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+        # This step will be skipped if the file doesn't exist,
+        # but the next step using gradle-build-action will still work
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
