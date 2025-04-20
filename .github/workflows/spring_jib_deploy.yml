@@ -22,15 +22,11 @@ jobs:
           java-version: "17"
           distribution: "temurin"
 
-      # Use the Gradle Build Action to set up Gradle
+      # Use Gradle Build Action which provides Gradle directly
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
-
-      # Or alternatively, ensure the wrapper is executable
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-        # This step will be skipped if the file doesn't exist,
-        # but the next step using gradle-build-action will still work
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: "8.5" # Specify a Gradle version
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -49,4 +45,5 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          ./gradlew jib -Djib.to.image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          # Use 'gradle' command instead of './gradlew'
+          gradle jib -Djib.to.image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
